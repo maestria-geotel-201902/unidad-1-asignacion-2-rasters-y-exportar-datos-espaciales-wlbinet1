@@ -1,15 +1,13 @@
 
-# Unidad 1, asignación 2: exportar datos, leer ráster y extraer valores
+Unidad 1, asignación 2: exportar datos, leer ráster y extraer valores
+=====================================================================
 
-Sigo ayudando con `...`. Donde quiera que los veas, deberás sustituirlos
-por lo que indique el correspondiente mandato.
+Sigo ayudando con `...`. Donde quiera que los veas, deberás sustituirlos por lo que indique el correspondiente mandato.
 
-Dentro de las opciones de `knitr`, en el encabezado de este archivo, es
-probable que encuentres el argumento `eval = F`. Antes de tejer debes
-cambiarlo a `eval = T`, para que evalúe los bloques de código según tus
-cambios.
+Dentro de las opciones de `knitr`, en el encabezado de este archivo, es probable que encuentres el argumento `eval = F`. Antes de tejer debes cambiarlo a `eval = T`, para que evalúe los bloques de código según tus cambios.
 
-## Provincia asignada
+Provincia asignada
+------------------
 
 Toma nota del código de tu provincia asignada aleatoriamente.
 
@@ -39,84 +37,67 @@ Toma nota del código de tu provincia asignada aleatoriamente.
  #       yoenn            21
 ```
 
-## Paquetes
+Paquetes
+--------
 
-  - Carga el paquete `sf` y el paquete `raster`.
-
-<!-- end list -->
+-   Carga el paquete `sf` y el paquete `raster`.
 
 ``` r
-library(...)
-library(...)
+library(sf)
+library(raster)
 ```
 
-## Exporta
+Exporta
+-------
 
-  - Determina el nombre de la capa provincias con `st_layers` del
-    archivo GeoPackage que se encuentra en la carpeta `data`.
+-   Determina el nombre de la capa provincias con `st_layers` del archivo GeoPackage que se encuentra en la carpeta `data`.
 
-  - Carga la capa de provincias con la función `st_read`, asignándola al
-    objeto `prov`.
+-   Carga la capa de provincias con la función `st_read`, asignándola al objeto `prov`.
 
-  - Genera el objeto `miprov` que sólo contenga tu provincia.
+-   Genera el objeto `miprov` que sólo contenga tu provincia.
 
-  - Usando la función `st_write`, exporta el objeto `miprov` como
-    GeoPackage a la carpeta `data` con el nombre `miprovexportado.gpkg`.
+-   Usando la función `st_write`, exporta el objeto `miprov` como GeoPackage a la carpeta `data` con el nombre `miprovexportado.gpkg`.
 
-  - Lee el archivo exportado con la función `st_read` y asígnalo al
-    objeto `miprovexportado`. Dado que sólo tiene una capa, no tienes
-    que especificar el argumento `layer`.
+-   Lee el archivo exportado con la función `st_read` y asígnalo al objeto `miprovexportado`. Dado que sólo tiene una capa, no tienes que especificar el argumento `layer`.
 
-  - Imprime en pantalla el objeto `miprovexportado` (sólo necesitas
-    escribir el nombre del objeto).
-
-<!-- end list -->
+-   Imprime en pantalla el objeto `miprovexportado` (sólo necesitas escribir el nombre del objeto).
 
 ``` r
-st_layers('...')
-... <- st_read(dsn = '...', layer = '...')
-... <- ...[prov$PROV %in% '...', ]
-st_write(obj = ..., dsn = 'data/...', driver = '...')
-... <- st_read(dsn = '...')
-...
+
+st_layers('data/divisionRD.gpkg')
+prov <- st_read(dsn = 'data/divisionRD.gpkg', layer = 'PROVCenso2010')
+miprov <- prov[prov$PROV %in% '30', ]
+st_write(obj = miprov, dsn = 'data/miprovexportado.gpkg', driver = 'GPKG')
+miprovexportado <- st_read(dsn = 'data/miprovexportado.gpkg')
+miprovexportado
 ```
 
-## Ráster
+Ráster
+------
 
-  - Con la función `raster`, carga el modelo digital de elevaciones que
-    se encuentra en la carpeta `data`. Es el único archivo de extensión
-    `.tif` Asígnalo al objeto `mde`
+-   Con la función `raster`, carga el modelo digital de elevaciones que se encuentra en la carpeta `data`. Es el único archivo de extensión `.tif` Asígnalo al objeto `mde`
 
-  - Genera un mapa con la función `plot`, usando la paleta de colores
-    `terrain.colors`.
-
-<!-- end list -->
+-   Genera un mapa con la función `plot`, usando la paleta de colores `terrain.colors`.
 
 ``` r
-... <- raster('data/...')
-plot(..., col = terrain.colors(n = 255))
+mde <- raster('data/mde_rd.tif')
+plot(mde, col = terrain.colors(n = 255))
 ```
 
-## Extraer valores del ráster
+Extraer valores del ráster
+--------------------------
 
-  - Con la función `raster::extract`, extrae los valores de elevación
-    correspondientes a tu provincia. Utiliza `mde` como objeto ráster y
-    `miprov` como capa zonal. Asigna los valores al objeto `miprovele`.
+-   Con la función `raster::extract`, extrae los valores de elevación correspondientes a tu provincia. Utiliza `mde` como objeto ráster y `miprov` como capa zonal. Asigna los valores al objeto `miprovele`.
 
-  - Imprime en pantalla el objeto `miprovele` (sólo necesitas escribir
-    el nombre del objeto).
+-   Imprime en pantalla el objeto `miprovele` (sólo necesitas escribir el nombre del objeto).
 
-  - Obtén los estadísticos descriptivos básicos (mínimo, primer cuartil,
-    media, mediana, tercer cuartil, máximo) de `miprovele` con la
-    función `summary`.
+-   Obtén los estadísticos descriptivos básicos (mínimo, primer cuartil, media, mediana, tercer cuartil, máximo) de `miprovele` con la función `summary`.
 
-  - Genera un histograma de `miprovele` usando la función `hist`.
-
-<!-- end list -->
+-   Genera un histograma de `miprovele` usando la función `hist`.
 
 ``` r
-... <- raster::extract(..., ...)[[1]]
-...
-summary(...)
-hist(...)
+miprovele <- raster::extract(mde, miprov)[[1]]
+miprovele
+summary(miprovele)
+hist(miprovele)
 ```
